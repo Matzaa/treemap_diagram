@@ -5,10 +5,6 @@
         .then((res) => res.json())
         .then((data) => {
             makeMap(data);
-            // // data.forEach((el)=> el["color"]=)
-            // for (let i = 0; i < data.children.length; i++) {
-            //     data.children[i]["color"] = colors[i];
-            // }
             console.log("data: ", data);
         })
         .catch((err) => console.log("err: ", err));
@@ -30,24 +26,24 @@
 
         // colors
         const colors = [
-            "#63b598",
-            "#ce7d78",
-            "#ea9e70",
-            "#a48a9e",
-            "#c6e1e8",
-            "#648177",
-            "#0d5ac1",
-            "#f205e6",
-            "#1c0365",
-            "#14a9ad",
-            "#4ca2f9",
-            "#a4e43f",
-            "#d298e2",
-            "#6119d0",
-            "#d2737d",
-            "#c0a43c",
-            "#f2510e",
-            "#651be6",
+            ["#63b598", "2600"],
+            ["#ce7d78", "Wii"],
+            ["#ea9e70", "NES"],
+            ["#a48a9e", "GB"],
+            ["#c6e1e8", "DS"],
+            ["#648177", "X360"],
+            ["#0d5ac1", "PS3"],
+            ["#f205e6", "PS2"],
+            ["#1c0365", "SNES"],
+            ["#14a9ad", "GBA"],
+            ["#4ca2f9", "PS4"],
+            ["#a4e43f", "3DS"],
+            ["#d298e2", "N64"],
+            ["#6119d0", "PS"],
+            ["#d2737d", "XB"],
+            ["#c0a43c", "PC"],
+            ["#f2510e", "PSP"],
+            ["#651be6", "XOne"],
         ];
         // hierarchy
 
@@ -84,43 +80,10 @@
             .attr("class", "tile")
             .attr("fill", (d) => {
                 let category = d.data.category;
-
-                if (category === "2600") {
-                    return colors[0];
-                } else if (category === "Wii") {
-                    return colors[1];
-                } else if (category === "NES") {
-                    return colors[2];
-                } else if (category === "GB") {
-                    return colors[3];
-                } else if (category === "DS") {
-                    return colors[4];
-                } else if (category === "X360") {
-                    return colors[5];
-                } else if (category === "PS3") {
-                    return colors[6];
-                } else if (category === "PS2") {
-                    return colors[7];
-                } else if (category === "SNES") {
-                    return colors[8];
-                } else if (category === "GBA") {
-                    return colors[9];
-                } else if (category === "PS4") {
-                    return colors[10];
-                } else if (category === "3DS") {
-                    return colors[11];
-                } else if (category === "N64") {
-                    return colors[12];
-                } else if (category === "PS") {
-                    return colors[13];
-                } else if (category === "XB") {
-                    return colors[14];
-                } else if (category === "PC") {
-                    return colors[15];
-                } else if (category === "PSP") {
-                    return colors[16];
-                } else if (category === "XOne") {
-                    return colors[17];
+                for (let i = 0; i < colors.length; i++) {
+                    if (category === colors[i][1]) {
+                        return colors[i][0];
+                    }
                 }
             })
             .attr("stroke", "beige")

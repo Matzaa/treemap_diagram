@@ -5,7 +5,6 @@
         .then((res) => res.json())
         .then((data) => {
             makeMap(data);
-            console.log("data: ", data);
         })
         .catch((err) => console.log("err: ", err));
 
@@ -50,51 +49,52 @@
         // legend
 
         const legendSquaresWidth = 30;
-        const legendWidth = 700;
-        const legendPadding = 30;
+        const legendSquaresHeight = 15;
+        const legendWidth = 500;
+        const legendPadding = 20;
 
         const legend = d3
             .select("body")
             .append("svg")
             .attr("width", legendWidth)
-            .attr("height", 500)
+            .attr("height", 205)
             .attr("id", "legend")
             .style("background-color", "rgb(202, 202, 202)")
             .style("margin-top", "40px");
 
         const legendRect = legend
-            .selectAll("rect")
+            .selectAll("g")
             .data(colors)
             .enter()
-            .append("rect")
-            .attr("width", legendSquaresWidth)
-            .attr("height", 30)
-            .attr("class", "legend-item")
-            .attr("fill", (d) => d[0])
-            .attr("y", (d, i) => {
-                if (i < 7) {
-                    return i * (legendSquaresWidth * 2) + 30;
-                } else if (i < 13) {
-                    return (i - 6) * (legendSquaresWidth * 2) + 30;
-                } else if (i < 19) {
-                    return (i - 12) * (legendSquaresWidth * 2) + 30;
-                }
-            })
-            .attr("x", (d, i) => {
-                if (i < 7) {
-                    return legendPadding;
-                } else if (i < 13) {
-                    return legendWidth / 3 + legendPadding;
-                } else if (i < 19) {
-                    return (legendWidth / 3) * 2 + legendPadding;
+            .append("g")
+            .attr("transform", (d, i) => {
+                if (i < 6) {
+                    return `translate(${legendPadding},${
+                        i * (legendSquaresHeight * 2) + legendPadding
+                    })`;
+                } else if (i < 12) {
+                    return `translate(${legendWidth / 3 + legendPadding},${
+                        (i - 6) * (legendSquaresHeight * 2) + legendPadding
+                    })`;
+                } else if (i < 18) {
+                    return `translate(${
+                        (legendWidth / 3) * 2 + legendPadding
+                    },${(i - 12) * (legendSquaresHeight * 2) + legendPadding})`;
                 }
             });
 
         legendRect
+            .append("rect")
+            .attr("width", legendSquaresWidth)
+            .attr("height", legendSquaresHeight)
+            .attr("class", "legend-item")
+            .attr("fill", (d) => d[0]);
+
+        legendRect
             .append("text")
-            .text((d) => d[1])
-            .attr("x", 5)
-            .attr("y", 20);
+            .attr("x", legendSquaresWidth + 10)
+            .attr("y", legendSquaresHeight - legendSquaresHeight / 4)
+            .html((d) => d[1]);
 
         // hierarchy
 
@@ -108,8 +108,6 @@
             .sort((node1, node2) => {
                 return node2["value"] - node1["value"];
             });
-
-        console.log("hier: ", hierarchy.leaves());
 
         let createTree = d3.treemap().size([900, 500]);
 
@@ -149,15 +147,34 @@
                 return d.y1 - d.y0;
             })
             .on("mouseover", (e, d) => {
+                d3.select(e.currentTarget).style("fill", "bisque");
                 tooltip
                     .style("left", e.pageX - 100 + "px")
                     .style("top", e.pageY - 20 + "px")
                     .style("transform", "translateX(100px)")
                     .style("visibility", "visible")
-                    .html(() => d.data.name)
+                    .style("background-color", () => {
+                        let category = d.data.category;
+                        for (let i = 0; i < colors.length; i++) {
+                            if (category === colors[i][1]) {
+                                return colors[i][0];
+                            }
+                        }
+                    })
+                    .html(
+                        `<p>name: ${d.data.name}</p><p>category: ${d.data.category}</p><p>value: ${d.data.value}</p>`
+                    )
                     .attr("data-value", () => d.data.value);
             })
-            .on("mouseout", () => {
+            .on("mouseout", (e, d) => {
+                d3.select(e.currentTarget).style("fill", () => {
+                    let category = d.data.category;
+                    for (let i = 0; i < colors.length; i++) {
+                        if (category === colors[i][1]) {
+                            return colors[i][0];
+                        }
+                    }
+                });
                 tooltip.style("visibility", "hidden");
             });
 
@@ -166,6 +183,7 @@
             .text((d) => {
                 return d.data.name;
             })
+            .attr("font-size", 5)
             .attr("x", 5)
             .attr("y", 20);
     }

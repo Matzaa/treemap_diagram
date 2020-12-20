@@ -25,6 +25,7 @@
             .text("");
 
         // colors
+
         const colors = [
             ["#63b598", "2600"],
             ["#ce7d78", "Wii"],
@@ -45,6 +46,56 @@
             ["#f2510e", "PSP"],
             ["#651be6", "XOne"],
         ];
+
+        // legend
+
+        const legendSquaresWidth = 30;
+        const legendWidth = 700;
+        const legendPadding = 30;
+
+        const legend = d3
+            .select("body")
+            .append("svg")
+            .attr("width", legendWidth)
+            .attr("height", 500)
+            .attr("id", "legend")
+            .style("background-color", "rgb(202, 202, 202)")
+            .style("margin-top", "40px");
+
+        const legendRect = legend
+            .selectAll("rect")
+            .data(colors)
+            .enter()
+            .append("rect")
+            .attr("width", legendSquaresWidth)
+            .attr("height", 30)
+            .attr("class", "legend-item")
+            .attr("fill", (d) => d[0])
+            .attr("y", (d, i) => {
+                if (i < 7) {
+                    return i * (legendSquaresWidth * 2) + 30;
+                } else if (i < 13) {
+                    return (i - 6) * (legendSquaresWidth * 2) + 30;
+                } else if (i < 19) {
+                    return (i - 12) * (legendSquaresWidth * 2) + 30;
+                }
+            })
+            .attr("x", (d, i) => {
+                if (i < 7) {
+                    return legendPadding;
+                } else if (i < 13) {
+                    return legendWidth / 3 + legendPadding;
+                } else if (i < 19) {
+                    return (legendWidth / 3) * 2 + legendPadding;
+                }
+            });
+
+        legendRect
+            .append("text")
+            .text((d) => d[1])
+            .attr("x", 5)
+            .attr("y", 20);
+
         // hierarchy
 
         let hierarchy = d3
